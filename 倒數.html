@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學測倒數計時器</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffcc70, #ff7e5f);
+            font-family: 'Noto Sans TC', sans-serif;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px 50px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            width: auto;
+            max-width: 1000px; /* 控制最大寬度 */
+            display: inline-block;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+        }
+
+        .countdown div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 15px; /* 增加每個時間區塊的左右間距 */
+        }
+
+        .countdown span {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .countdown:before {
+            content: '🕒 ';
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* 增加陰影 */
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4); /* 漸層背景 */
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>學測倒數計時器</h1>
+        <div id="countdown" class="countdown"></div>
+    </div>
+
+    <footer id="dailyQuote">為學測加油！準備好面對挑戰！</footer>
+
+    <script>
+        // 設定學測開始和結束日期
+        const examStartDate = new Date('2027-01-23T00:00:00');
+        const examEndDate = new Date('2027-01-25T23:59:59'); // 到 1 月 25 日的最後一秒
+
+        // 設定每日標語
+        const quotes = [
+            "今天的努力，會讓明天的你感謝自己~",
+            "把困難當作機會，這樣你就不會覺得它太難~",
+            "保持微笑，今天會是充滿可能的一天~",
+            "學習是成長的橋樑，別怕跨過去~",
+            "每一天都是新的機會，去實現夢想~",
+            "別害怕失敗，因為那是成功的一部分~",
+            "放輕鬆，學測只是你人生中的其中一站~",
+            "如果你覺得日子很難，那是因為你正在走上坡路~",
+            "學測小幫手：今天喝水了嗎~",
+            "記得休息，充電才能走得更遠~",
+            "今天的目標是比昨天進步哪怕一點點~",
+            "笑一笑，沒什麼事情是過不去的~",
+            "別急，人生是馬拉松，不是短跑~",
+            "自信是一半的勝利，保持自信~",
+            "這不是結束，而是新的開始~"
+        ];
+
+        // 根據日期顯示不同的標語
+        function setDailyQuote() {
+            const today = new Date();
+            const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+            const quoteIndex = dayOfYear % quotes.length;
+            document.getElementById('dailyQuote').innerHTML = `今日金句：<br>${quotes[quoteIndex]}`;
+        }
+
+        setDailyQuote();
+
+        function updateCountdown() {
+            const now = new Date();
+            
+            if (now >= examEndDate) {
+                document.getElementById('countdown').innerText = "🎉 學測已經結束！";
+                return;
+            }
+            
+            if (now >= examStartDate) {
+                document.getElementById('countdown').innerText = "📚 學測進行中！";
+                return;
+            }
+
+            const timeDiff = examStartDate - now;
+
+            const seconds = Math.floor(timeDiff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            const weeks = Math.floor(days / 7);
+            const years = Math.floor(days / 365);
+            const months = Math.floor((days % 365) / 30);
+            const remainingDays = days % 365 % 30;
+            const remainingWeeks = Math.floor(remainingDays / 7);
+            const remainingDaysAfterWeeks = remainingDays % 7;
+            const remainingHours = hours % 24;
+            const remainingMinutes = minutes % 60;
+            const remainingSeconds = seconds % 60;
+
+            // 剩下超過1個月，顯示年、月、天
+            if (months >= 1) {
+                document.getElementById('countdown').innerHTML = `
+                    <div>
+                        <div>${years}</div>
+                        <span>年</span>
+                    </div>
+                    <div>
+                        <div>${months}</div>
+                        <span>個月</span>
+                    </div>
+                    <div>
+                        <div>${remainingDays}</div>
+                        <span>天</span>
+                    </div>
+                `;
+            }
+            // 剩下不到1個月，顯示週和天
+            else if (weeks >= 1) {
+                document.getElementById('countdown').innerHTML = `
+                    <div>
+                        <div>${remainingWeeks}</div>
+                        <span>週</span>
+                    </div>
+                    <div>
+                        <div>${remainingDaysAfterWeeks}</div>
+                        <span>天</span>
+                    </div>
+                `;
+            }
+            // 剩下不到1週，顯示天、時、分、秒
+            else {
+                document.getElementById('countdown').innerHTML = `
+                    <div>
+                        <div>${remainingDays}</div>
+                        <span>天</span>
+                    </div>
+                    <div>
+                        <div>${remainingHours}</div>
+                        <span>小時</span>
+                    </div>
+                    <div>
+                        <div>${remainingMinutes}</div>
+                        <span>分鐘</span>
+                    </div>
+                    <div>
+                        <div>${remainingSeconds}</div>
+                        <span>秒</span>
+                    </div>
+                `;
+            }
+        }
+
+        // 每秒更新一次倒數計時
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
